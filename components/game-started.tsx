@@ -32,9 +32,13 @@ export default function CropGuessingGame() {
             console.log("Image path being sent to API:", imageFilePath); // Check the path here
 
             if (response.status === 200) {
-                const trueLabel = imageFilePath.split('/').pop()?.split('.')[0].toLowerCase();
+                // Extract the base class name from the image file path
+                const trueLabelMatch = imageFilePath.split('/').pop()?.match(/^[a-zA-Z]+/);
+                const trueLabel = trueLabelMatch ? trueLabelMatch[0].toLowerCase() : '';
+
                 const vggPrediction = response.data.predicted_class.toLowerCase();
 
+                // Update scoring logic
                 if (buttonContent.toLowerCase() === trueLabel) setScore((prevScore) => prevScore + 1);
                 if (vggPrediction === trueLabel) setVggScore((prevScore) => prevScore + 1);
 
