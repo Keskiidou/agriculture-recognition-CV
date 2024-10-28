@@ -13,6 +13,7 @@ export default function CropGuessingGame() {
     const [predictedClass, setPredictedClass] = useState('');
     const [imageName, setImageName] = useState('');
     const maxScore = 10;
+    const crops = ['jute', 'maize', 'sugarcane', 'rice', 'wheat'];
 
     const handleButtonClick = async (buttonContent: string) => {
         if (score < maxScore && vggScore < maxScore) {
@@ -22,33 +23,23 @@ export default function CropGuessingGame() {
     };
 
     const predictImage = async (buttonContent: string) => {
-        const formData = new FormData();
-        const imagePath = imageFilePath;
-
         try {
-            const imageResponse = await fetch(imagePath);
-            const imageBlob = await imageResponse.blob();
-            formData.append('file', imageBlob, 'image.jpg');
+            const response = await axios.post(
+                'http://localhost:5000/predict',
+                { path: imageFilePath },  // This should now contain the absolute path
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+            console.log("Image path being sent to API:", imageFilePath); // Check the path here
 
-            const response = await axios.post('http://localhost:5000/predict', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
-
-            const data = response.data;
             if (response.status === 200) {
-                const trueLabel = imagePath.split('/').pop()?.split('.')[0].toLowerCase();
-                const vggPrediction = data.predicted_class.toLowerCase();
+                const trueLabel = imageFilePath.split('/').pop()?.split('.')[0].toLowerCase();
+                const vggPrediction = response.data.predicted_class.toLowerCase();
 
-                if (buttonContent.toLowerCase() === trueLabel) {
-                    setScore((prevScore) => prevScore + 1);
-                }
-
-                if (vggPrediction === trueLabel) {
-                    setVggScore((prevScore) => prevScore + 1);
-                }
+                if (buttonContent.toLowerCase() === trueLabel) setScore((prevScore) => prevScore + 1);
+                if (vggPrediction === trueLabel) setVggScore((prevScore) => prevScore + 1);
 
                 setPredictedClass(vggPrediction);
-                setImageName(imagePath.split('/').pop() || '');
+                setImageName(imageFilePath.split('/').pop() || '');
             }
         } catch (error) {
             console.error('Error:', error);
@@ -57,21 +48,20 @@ export default function CropGuessingGame() {
         setRefreshKey((prevKey) => prevKey + 1);
     };
 
-    // Clear chosen crop, VGG prediction, and image name after a short delay
+
+    // Reset state after displaying prediction for 2 seconds
     useEffect(() => {
         if (clickedButton || predictedClass || imageName) {
             const timer = setTimeout(() => {
                 setClickedButton('');
                 setPredictedClass('');
                 setImageName('');
-            }, 2000); // 2 seconds
-
+            }, 2000);
             return () => clearTimeout(timer);
         }
     }, [clickedButton, predictedClass, imageName]);
 
     const isGameOver = score >= maxScore || vggScore >= maxScore;
-    const crops = ['jute', 'maize', 'sugarcane', 'rice', 'wheat'];
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-700 py-12 px-4 sm:px-6 lg:px-8">
