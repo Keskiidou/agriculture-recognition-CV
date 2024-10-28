@@ -24,18 +24,18 @@ export default function Img_up() {
 
         // Create a FormData object to send the image to the server
         const formData = new FormData();
-        formData.append("image", selectedImage);
+        formData.append("file", selectedImage); // Change "image" to "file" to match the Flask API
 
         try {
             // Call your model's API endpoint
-            const response = await fetch("/api/predict", {
+            const response = await fetch("http://localhost:5000/demo", {
                 method: "POST",
                 body: formData,
             });
 
             if (response.ok) {
                 const result = await response.json();
-                setPrediction(result.prediction);
+                setPrediction(result.predicted_class); // Set the predicted class
             } else {
                 console.error("Prediction failed.");
             }
