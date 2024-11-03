@@ -21,7 +21,6 @@ export default function HeroHome() {
                     data-aos="fade-up"
                     data-aos-delay={200}
                 >
-                  Project Overview and Implementation
                 </p>
                 <p
                     className="mb-8 text-xl text-indigo-200/65"
@@ -35,7 +34,7 @@ export default function HeroHome() {
                     data-aos="fade-up"
                     data-aos-delay={600}
                 >
-                  The methodology includes data exploration to understand the dataset structure, preprocessing of images for optimal model input, and the creation of a convolutional neural network (CNN) using the VGG16 architecture. The model is trained and validated to ensure high accuracy and performance, with results presented through confusion matrices and ROC curves.
+                  The methodology includes data exploration to understand the dataset structure, preprocessing of images for optimal model input, and the creation of a convolutional neural network (CNN) using the VGG16 architecture.The model is trained and validated to ensure high accuracy and performance, with results presented through confusion matrices and ROC curves.
                 </p>
                 <p
                     className="mb-8 text-xl text-indigo-200/65"
